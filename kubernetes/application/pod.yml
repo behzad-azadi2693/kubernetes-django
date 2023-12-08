@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: mycontainer
+    image: web:30
+    imagePullPolicy: Never
+    ports:
+    - containerPort: 8000
+    command: 
+      - /bin/sh
+      - -c
+      - |
+        python3 manage.py makemigrations 
+        python3 manage.py migrate --no-input
+        python manage.py runserver 0.0.0.0:8000
+    volumeMounts:
+    - name: secret-volume
+      mountPath: /etc/myapp/secrets
+      readOnly: true
+    env:
+    - name: SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: app-secret
+          key: SECRET_KEY
+    - name: DEBUG
+      valueFrom:
+        secretKeyRef:
+          name: app-secret
+          key: DEBUG
+    envFrom:
+    - configMapRef:
+        name: postgres-config
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: app-secret
+

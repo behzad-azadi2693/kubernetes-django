@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: django-app
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      containers:
+      - name: django-app
+        image: web:3.0  
+        ports:
+        - containerPort: 8000
+        command: 
+          - /bin/sh
+          - -c
+          - |
+            python3 manage.py makemigrations 
+            python3 manage.py migrate --no-input
+            python manage.py runserver 0.0.0.0:8000
+        volumeMounts:
+        - name: secret-volume
+          mountPath: /etc/myapp/secrets
+          readOnly: true
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: SECRET_KEY
+        - name: DEBUG
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DEBUG
+        envFrom:
+        - configMapRef:
+            name: postgres-config
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: app-secret

@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  database_brity:
+    image: postgres
+    hostname: ${POSTGRES_HOST}
+    container_name: brity_postgres_container
+    command: -p ${POSTGRES_PORT}
+    restart: on-failure
+    environment: 
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    expose:
+      - ${POSTGRES_PORT}
+    ports: 
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    env_file:
+      - .env
+    volumes: 
+      - ./data/brity/postgres:/var/lib/postgresql/data 
+    networks: 
+      - main
+
+  web:
+    build: .
+    image: web:3.0
+    hostname: web
+    container_name: web_container
+    command: sh -c "python3 manage.py makemigrations && 
+            python3 manage.py migrate --no-input && 
+            python manage.py runserver 0.0.0.0:8000"
+    restart: on-failure
+    env_file:
+      - .env
+    expose: 
+      - ${DJANGO_PORT}
+    ports:
+      - ${DJANGO_PORT}:${DJANGO_PORT}
+    networks:
+      - main
+    volumes: 
+      - .:/web/
+      - ./media:/project/media
+      - ./static:/project/static
+
+
+networks:
+  main:
+    name: main
+
+
+volumes:
+  data:
+  static:
+  media:
