@@ -1,6 +1,5 @@
-# Kubernetes
 ```
-#running django app with kubernetes or DockerCompose
+running django app with kubernetes or DockerCompose in develope,deployment,kubernetes status
 ```
 
 ***
