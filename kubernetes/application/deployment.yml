@@ -1,3 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+type: Opaque
+data:
+  DEBUG: 'True'
+  SECRET_KEY: 'cGFzc3dvcmQ='
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,7 +23,7 @@ spec:
     spec:
       containers:
       - name: django-app
-        image: web:3.0  
+        image: web:4.0  
         ports:
         - containerPort: 8000
         command: 
@@ -39,9 +48,19 @@ spec:
             secretKeyRef:
               name: app-secret
               key: DEBUG
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-secret
+              key: REDIS_PASSWORD
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
         envFrom:
         - configMapRef:
-            name: postgres-config
+            name: project-config
       volumes:
       - name: secret-volume
         secret:

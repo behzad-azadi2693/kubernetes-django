@@ -21,6 +21,49 @@ services:
       - ./data/brity/postgres:/var/lib/postgresql/data 
     networks: 
       - main
+      
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: on-failure
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    depends_on:
+      - database_brity
+    ports:
+      - "5050:80"
+    env_file:
+      - .env
+    volumes:
+      - /data/brity/pgadmin:/var/lib/pgadmin/data
+    networks:
+      - main
+
+
+  redis_brity:
+    image: redis
+    hostname: ${REDIS_HOST}
+    container_name: ${REDIS_HOST}
+    restart: on-failure
+    command: sh -c "redis-server --requirepass ${REDIS_PASSWORD} &&
+                    redis-server /usr/local/etc/redis/redis.conf && --port ${REDIS_PORT}"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: ${REDIS_PORT}
+    expose:
+      - ${REDIS_PORT}
+    ports:
+      - ${REDIS_PORT}:{REDIS_PORT}
+    env_file:
+      - .env
+    volumes:
+      - ./data/brity/redis:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - main
+
 
   web:
     build: .

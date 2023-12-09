@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgres-config
+  name: project-config
 data:
   POSTGRES_DB: mydatabase
   POSTGRES_USER: myuser
+  POSTGRES_PORT: "5432"
   POSTGRES_PASSWORD: mypassword
   POSTGRES_HOST: postgres-service
   WEB_DOMAIN: localhost
+  REDIS_HOST: redis-service
+  REDIS_PORT: "6379"

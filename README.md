@@ -1,8 +1,10 @@
 # Kubernetes
 ```
-## running django app and postgresql with kubernetes
+#running django app and postgresql with kubernetes
 
-in kubernetes directory have two directory for configuration kubernetes which first directory with name application(django) and second directory for database(postgresql) 
+in kubernetes directory have two directory for configuration
+kubernetes which first directory with name application(django)
+and second directory for database(postgresql) 
 
 
 in application:
@@ -18,7 +20,7 @@ configamp.yml for key-value common in two pod
 
 README.md have a series of commands for help
 
-***
+---
 
 in project directory the django project is located
 ```

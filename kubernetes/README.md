@@ -1,17 +1,23 @@
-# 1- docker build -t <image name>:<tag> .
+# 1- docker build -t image_name:tag .
 
 # 2- minikube start 
 
-# 3- minikube image load <your image name>
+# 3- minikube image load your_image_name
 
-# 4
-```# step 1- kubectl apply -f configmap.yml```
+***
 
-```# step 2- kubectl apply -f database/database.yml```
+# 4-
+```# step_1- kubectl apply -f configmap.yml```
 
-```# step 3- kubectl apply -f application/secret.yml```
+```# step_2- kubectl apply -f database/redis.yml```
 
-```# step 4- kubectl apply -f application/deployment.yml```
+```# step_3- kubectl apply -f database/postgres.yml```
+
+```# step_4- kubectl apply -f database/pgadmin.yml```
+
+```# step_5- kubectl apply -f application/secret.yml```
+
+```# step_6- kubectl apply -f application/deployment.yml```
 
 ```
 kubectl port-forwrad <your image name> <local-port>:<container-port>
