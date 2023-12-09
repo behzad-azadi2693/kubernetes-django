@@ -1,10 +1,11 @@
 version: '3.9'
 
+
 services:
-  database_brity:
+  database:
     image: postgres
     hostname: ${POSTGRES_HOST}
-    container_name: brity_postgres_container
+    container_name: postgres_container
     command: -p ${POSTGRES_PORT}
     restart: on-failure
     environment: 
@@ -17,10 +18,12 @@ services:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     env_file:
       - .env
-    volumes: 
-      - ./data/brity/postgres:/var/lib/postgresql/data 
     networks: 
       - main
+    volumes: 
+      - ./data/postgres:/var/lib/postgresql/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
       
 
   pgadmin:
@@ -31,24 +34,25 @@ services:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     depends_on:
-      - database_brity
+      - database
     ports:
       - "5050:80"
     env_file:
       - .env
-    volumes:
-      - /data/brity/pgadmin:/var/lib/pgadmin/data
     networks:
       - main
+    volumes:
+      - /data/pgadmin:/var/lib/pgadmin/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
 
 
-  redis_brity:
+  redis:
     image: redis
     hostname: ${REDIS_HOST}
     container_name: ${REDIS_HOST}
     restart: on-failure
-    command: sh -c "redis-server --requirepass ${REDIS_PASSWORD} &&
-                    redis-server /usr/local/etc/redis/redis.conf && --port ${REDIS_PORT}"
+    command: sh -c "redis-server --requirepass ${REDIS_PASSWORD}"
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_PORT: ${REDIS_PORT}
@@ -58,11 +62,13 @@ services:
       - ${REDIS_PORT}:{REDIS_PORT}
     env_file:
       - .env
-    volumes:
-      - ./data/brity/redis:/data
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       - main
+    volumes:
+      - ./data/redis:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
 
 
   web:
@@ -73,7 +79,12 @@ services:
     command: sh -c "python3 manage.py makemigrations && 
             python3 manage.py migrate --no-input && 
             python manage.py runserver 0.0.0.0:8000"
+            # uwsgi --ini uwsgi.ini
+            # gunicorn -k gevent project.config.wsgi:application -b 0.0.0.0:8000
     restart: on-failure
+    depends_on:
+      - redis
+      - database
     env_file:
       - .env
     expose: 
@@ -84,8 +95,32 @@ services:
       - main
     volumes: 
       - .:/web/
-      - ./media:/project/media
-      - ./static:/project/static
+      - ./media:/media
+      - ./static:/static
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+  nginx:
+    image: nginx
+    hostname: nginx
+    container_name: nginx
+    command: sh -c "nginx -g 'daemon off;'"
+    restart: on-failure
+    depends_on:
+      - web
+    networks: 
+      - main
+    expose:
+      - "80"
+    ports: 
+      - "80:80"
+    volumes: 
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./media:/web/media
+      - ./static:/web/static
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
 
 
 networks:

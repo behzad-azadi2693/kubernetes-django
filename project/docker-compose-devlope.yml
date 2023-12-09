@@ -1,0 +1,61 @@
+version: '3.9'
+
+
+services:
+  database:
+    image: postgres
+    hostname: ${POSTGRES_HOST}
+    container_name: postgres_container
+    command: -p ${POSTGRES_PORT}
+    restart: on-failure
+    environment: 
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    expose:
+      - ${POSTGRES_PORT}
+    ports: 
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    env_file:
+      - .env
+    networks: 
+      - main
+    volumes: 
+      - ./data/postgres:/var/lib/postgresql/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      
+
+  redis:
+    image: redis
+    hostname: ${REDIS_HOST}
+    container_name: ${REDIS_HOST}
+    restart: on-failure
+    command: sh -c "redis-server --requirepass ${REDIS_PASSWORD}"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: ${REDIS_PORT}
+    expose:
+      - ${REDIS_PORT}
+    ports:
+      - ${REDIS_PORT}:{REDIS_PORT}
+    env_file:
+      - .env
+    networks:
+      - main
+    volumes:
+      - ./data/redis:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+networks:
+  main:
+    name: main
+
+
+volumes:
+  data:
+  static:
+  media:
