@@ -36,6 +36,7 @@ spec:
       containers:
       - name: postgres
         image: postgres:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 5432
         env:
