@@ -20,6 +20,33 @@ spec:
     targetPort: 8000
   type: LoadBalancer
 ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /mnt/web/media
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 5Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -50,6 +77,7 @@ spec:
         - name: secret-volume
           mountPath: /etc/myapp/secrets
           readOnly: true
+        - name: media-volume
         env:
         - name: SECRET_KEY
           valueFrom:
@@ -78,3 +106,6 @@ spec:
       - name: secret-volume
         secret:
           secretName: app-secret
+      - name: media-volume
+        persistentVolumeClaim:
+          claimName: media-pvc

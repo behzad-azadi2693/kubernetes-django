@@ -12,6 +12,7 @@ kind: Service
 metadata:
   name: myapp-service
 spec:
+  # type: NodePort
   selector:
     app: myapp
   ports:
@@ -43,6 +44,8 @@ spec:
     - name: secret-volume
       mountPath: /etc/myapp/secrets
       readOnly: true
+    - name: media-volume
+      mountPath: /web/media
     env:
     - name: SECRET_KEY
       valueFrom:
@@ -66,4 +69,8 @@ spec:
   - name: secret-volume
     secret:
       secretName: app-secret
+  - name: media-volume
+    hostPath:
+      path: /mnt/data/media
+
 

@@ -29,6 +29,7 @@ spec:
       - name: nginx-container
         imagePullPolicy: Never
         image: nginx
+        command: ["nginx", "-g", "daemon off;"]
         ports:
         - containerPort: 80
         volumeMounts:
