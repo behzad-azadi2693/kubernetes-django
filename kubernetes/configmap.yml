@@ -10,3 +10,6 @@ data:
   WEB_DOMAIN: localhost
   REDIS_HOST: redis-service
   REDIS_PORT: "6379"
+  STATUS: kubernetes
+  nginx.conf: |
+    $(cat ./nginx/nginx.conf)

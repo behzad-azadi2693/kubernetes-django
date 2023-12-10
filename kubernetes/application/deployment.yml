@@ -7,6 +7,19 @@ data:
   DEBUG: 'True'
   SECRET_KEY: 'cGFzc3dvcmQ='
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-service
+spec:
+  selector:
+    app: django-app
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  type: LoadBalancer
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
