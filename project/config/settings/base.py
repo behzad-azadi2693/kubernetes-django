@@ -34,7 +34,6 @@ LOCAL_APPS = [
 
 PACK_APPS = [
     'rest_framework',
-    'debug_toolbar',
     'drf_spectacular',
 ]
 

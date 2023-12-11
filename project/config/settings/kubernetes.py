@@ -1,4 +1,4 @@
-from . import base
+from .base import *
 import os
 
 # Quick-start development settings - unsuitable for production
@@ -11,7 +11,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = [os.getenv('WEB_DOMAIN'), f'www{os.getenv("WEB_DOMAIN")}', 'web']
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

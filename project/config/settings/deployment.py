@@ -1,10 +1,10 @@
-from . import base
+from .base import *
 import os
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
-dotenv_path = os.path.join(base.BASE_DIR, '.env')
+dotenv_path = os.path.join(BASE_DIR, '.env')
 load_dotenv(dotenv_path)
 
 # Quick-start development settings - unsuitable for production
