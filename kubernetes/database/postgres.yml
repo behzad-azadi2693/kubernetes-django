@@ -33,12 +33,25 @@ spec:
   hostPath:
     path: "/mnt/postgres/data"
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: manual
+  volumeName: postgres-pv
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres-statefulset
 spec:
-  serviceName: "postgres-service"
+  serviceName: postgres-service
   replicas: 1
   selector:
     matchLabels:
@@ -64,14 +77,10 @@ spec:
         - configMapRef:
             name: project-config
         volumeMounts:
-        - name: postgres-storage
+        - name: postgres-data
           mountPath: /var/lib/postgresql/data
-  volumeClaimTemplates:
-  - metadata:
-      name: postgres-storage
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 5Gi
-      volumeName: postgres-pv
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+

@@ -46,6 +46,7 @@ spec:
   resources:
     requests:
       storage: 5Gi
+  valumeName: media-pv
 ---
 apiVersion: apps/v1
 kind: Deployment

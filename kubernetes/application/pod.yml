@@ -12,7 +12,7 @@ kind: Service
 metadata:
   name: myapp-service
 spec:
-  # type: NodePort
+  type: NodePort
   selector:
     app: myapp
   ports:
@@ -62,6 +62,11 @@ spec:
         secretKeyRef:
           name: redis-secret
           key: REDIS_PASSWORD
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: postgres-secret
+          key: POSTGRES_PASSWORD
     envFrom:
     - configMapRef:
         name: project-config

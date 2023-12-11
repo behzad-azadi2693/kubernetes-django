@@ -33,6 +33,19 @@ spec:
   hostPath:
     path: "/mnt/redis_sage/data"
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: manual
+  volumeName: redis-pv
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -54,22 +67,18 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 6379
-        volumeMounts:
-        - name: redis-data
-          mountPath: /data
-        command: ["redis-server", "--requirepass", $(REDIS_PASSWORD)]
+        command: ["redis-server", "--requirepass", "$(REDIS_PASSWORD)"]
         env:
         - name: REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
               name: redis-secret
               key: REDIS_PASSWORD
-  volumeClaimTemplates:
-  - metadata:
-      name: redis-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 2Gi
-      volumeName: redis-pv
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-pvc
+

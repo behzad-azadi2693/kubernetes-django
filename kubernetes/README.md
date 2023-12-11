@@ -42,4 +42,5 @@ kubectl get secret
 kubectl delete secret secret-name
 kubectl get secret -o yaml > secret-name.yml
 
+minikube service --all
 ```
