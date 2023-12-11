@@ -8,9 +8,9 @@ import os
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = [os.getenv('WEB_DOMAIN'), f'www{os.getenv("WEB_DOMAIN")}', 'web']
+ALLOWED_HOSTS = [os.getenv('WEB_DOMAIN'), f'www{os.getenv("WEB_DOMAIN")}', 'web', '*']
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -24,7 +24,6 @@ DATABASES = {
             'PORT': os.getenv('POSTGRES_PORT'),
         }
     }
-
 
 
 # redis chache

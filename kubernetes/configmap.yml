@@ -11,5 +11,6 @@ data:
   REDIS_HOST: redis-service
   REDIS_PORT: "6379"
   STATUS: kubernetes
+  DEBUG: 'True'
   nginx.conf: |
     $(cat ./nginx/nginx.conf)
