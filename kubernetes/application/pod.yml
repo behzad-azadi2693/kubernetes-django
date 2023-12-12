@@ -37,7 +37,8 @@ spec:
       - /bin/sh
       - -c
       - |
-        python3 manage.py makemigrations 
+        python3 manage.py collectstatic --no-input
+        python3 manage.py makemigrations
         python3 manage.py migrate --no-input
         python manage.py runserver 0.0.0.0:8000
     volumeMounts:
@@ -45,7 +46,9 @@ spec:
       mountPath: /etc/myapp/secrets
       readOnly: true
     - name: media-volume
-      mountPath: /web/media
+      mountPath: media/
+    - name: static-volume
+      mountPath: static/
     env:
     - name: SECRET_KEY
       valueFrom:
@@ -76,6 +79,7 @@ spec:
       secretName: app-secret
   - name: media-volume
     hostPath:
-      path: /mnt/data/media
-
-
+      path: /mnt/project/media
+  - name: static-volume
+    hostPath:
+      path: /mnt/project/static

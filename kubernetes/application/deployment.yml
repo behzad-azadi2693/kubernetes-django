@@ -33,7 +33,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   local:
-    path: /mnt/web/media
+    path: /mnt/project
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -78,7 +78,10 @@ spec:
         - name: secret-volume
           mountPath: /etc/myapp/secrets
           readOnly: true
-        - name: media-volume
+        - name: project-volume
+          mountPath: media/
+        - name: project-volume
+          mountPath: static/
         env:
         - name: SECRET_KEY
           valueFrom:
@@ -107,6 +110,6 @@ spec:
       - name: secret-volume
         secret:
           secretName: app-secret
-      - name: media-volume
+      - name: project-volume
         persistentVolumeClaim:
           claimName: media-pvc
